@@ -116,3 +116,33 @@ Elastic Beanstalk:
    * Pay only for resources
    * Not recommended for Production
    * Many preconfigured platforms
+
+AWS Cloud9:
+* Requires SG update to connect from local PC
+* EB CLI is not installed, can be installed from Github
+* eb init:
+   * select regio
+   * select platform
+   * use codecommit?
+   * enter name
+   * default branch for Codecommit
+   * setup ssh for instances?
+   * config.yml is created
+* EB Config:
+   * *.ebextensions/001_envvar.config*:
+      * *aws:elasticbeanstalk:environment:variables*
+   * .ebextensions/002_node_command.config:
+      * *aws:elasticbeanstalk:container:nodejs* - container version and npm start
+* EB Create:
+   * *eb create --single* - for development
+      * enter name
+      * cname
+      * use spot fleet?
+   * *eb status* - check status:
+      * aws-eb2-elasstibeanstalk-role is created
+      * Status: Ready
+      * Health: Green
+      * Branch
+      * Repository
+   * *eb logs*
+   * *eb events* - datetime, level, description
