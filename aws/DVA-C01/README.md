@@ -38,12 +38,12 @@ Elastic Beanstalk:
 * Web (ec2 asg elb):
    * Load balanced env (ec2, elb, asg)
    * Single Instance env (ec2, asg (n=1))
-* Worker (ec2 asg sns) env
-* Deployment:
+* Worker (ec2, asg, sqs) env
+* Deployment policies:
    * All at once: 
-      * Fullredeployment for rollback
+      * Full redeployment for rollback
       * Cons: downtime
-   * Rolling: 
+   * Rolling (can't be used for Single-Instance env, requires ELB): 
       * Remove a part of existing servers
       * Create new servers
       * Rollback requires roll update   
@@ -53,10 +53,66 @@ Elastic Beanstalk:
       * Pros: never reduce capacity
       * Rollback requires roll update 
    * Immutable: 
-      * Create new servers+asg
-      * Switch to a new asg 
+      * Create new servers+asg inside an Environment (In-Place deploment)
+      * Switch ELB to a new ASG 
       * Pros: safest for critical apps
    * Blue/green: 
-      * Similar to Immutable
-      * Uses dns to switch LB
+      * Similar to Immutable but it creates a new EB Environment
+      * Switch DNS to a new ELB
       * Cons: slow switch
+      * Requires that your DB is out of an Environment
+
+* Configuration files for customization:
+   * .ebextensions - hidden folder that contains config files (can define custom image)
+   * .config - extension for config files
+   * Config files can config:
+      * Option settings
+      * Linux/Windows server config
+      * Custom resources
+   * Linux config:
+      * Packages in yum
+      * Users
+      * Groups
+      * Files with chmod
+      * Commands (execute on ec2)
+      * Services
+      * Container commands that affects source code
+      
+* Environment manifest:
+   * env.yml
+   * Environment name
+   * Choose the stack solution
+   * ASsociate env links
+   * Default config of services
+   
+* CLI:
+   * Install from Github
+   * Commands:
+      * eb init
+      * eb create - create env
+      * eb status - env status
+      * eb helath - instances health
+      * eb events
+      * eb logs - view logs
+      * eb open - open in browser
+      * eb deploy
+      * eb config
+      * eb terminate
+      
+* Custom Image: If you need to install a lot of software
+   * Take an original ImageId
+   * Create a EC2 from image
+   * Install custom packages
+   * Create a new AMI
+   * Update an ENV image
+   
+* Configure RDS:
+   * Inside EB Env:
+      * If env is terminated - RDS is terminated
+   * Outside EB Env:
+      * RDS is remained if EB env is terminated
+      
+* Notes:
+   * Pay only for resources
+   * Not recommended for Production
+   * Many preconfigured platforms
