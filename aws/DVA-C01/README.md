@@ -159,4 +159,49 @@ AWS Cloud9:
    * *eb deploy study-sync-prod-clone* - deploy a clone environment
    * *eb swap study-sync-prod --destination_name study-sync-prod-clone*
    * *eb terminate study-sync-prod*
-   
+* In Docker container:
+   * put a Dockerfile in root
+   * *eb create --single*
+   * *Dockerrun.json* file:
+      * AWSEBDockerrunversion
+      * Image/Name
+
+ECS (Elastic Container Server):
+* *ECS cluster* = EC2's = EC2 container
+* Task definition = JSON File (<=10 containers)
+   * Wizard in console
+   * image = ECR or Docker
+   * 1+ essential container in a task
+   * Env values or Env valueFrom parameter storage
+* *Container Agent* is running on EC2
+* New Cluster: 
+   * type = Fargate or ECS
+   * Number of instances
+   * EBS Storage volume
+   * OS Amazon Linux 2 or 1
+* ECS Instance Role: Create *ecsInstanceRole* role
+* ECS Instance Role: Create *ecsTaskExecutionRole* role for *Task Role*:
+   * Elastic Container Service
+   * *AmazonECSTaskExecutionRolePolicy*
+* *Task* - lauches a container, not running when container is complete
+* *Service* - number of tasks and scheduling with LB
+
+ECR:
+* Docker images for ECS, K8s, Fargate, EC2
+
+Fargate / ECS Fargate:
+* Serverless containers
+* Empty ECS Cluster, to create choose *Networking only*:
+* Charged at least *one minute* and after *by second*, based on duration and consumption
+* Fargate Task:
+   * memory and vCPU
+   * resources for each container
+   * SG to per task and service
+   * VPC and subnet per task and service
+   * IAM Role per task and service
+* Fargate vs Lambda:
+   * duration: Lambda <15mins
+   * memory: fargate <30GB, Lambda <3GB
+   * container: fargate own containers
+   * integration: manual work for fargate integration
+   * price: fargate per 1sec >1min, lambda per 100ms
