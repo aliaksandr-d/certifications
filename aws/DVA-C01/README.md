@@ -146,3 +146,17 @@ AWS Cloud9:
       * Repository
    * *eb logs*
    * *eb events* - datetime, level, description
+* Immutable deployment:
+   * Update *.ebextensions/deploy.config*:
+      * DeploymentPolicy: Immutable
+      * HealthCheckSuccessThreshold
+      * IgnoreHealthCheck
+   * *eb deploy* - update application with a new config
+   * *eb abort* - abort deployment
+* Blue-green deployment:
+   * Uses *Actions/Swap URL* and change *Environment name*
+   * *eb clone* to clone an environment with suffix *-clone*
+   * *eb deploy study-sync-prod-clone* - deploy a clone environment
+   * *eb swap study-sync-prod --destination_name study-sync-prod-clone*
+   * *eb terminate study-sync-prod*
+   
