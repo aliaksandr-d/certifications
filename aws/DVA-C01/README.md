@@ -281,4 +281,121 @@ AWS CLI & SDK:
    * set of lib integrate AWS SDK
    * Languages: C++, Go, JS, .NET, NodeJs, PHP, Python, Ruby
    * Path: *~/.aws/credentials* to configure profiles and keys
-   * 
+ 
+KMS:
+* Create and control, rotate encryption key, stores Master keys
+* multi-tenant
+* Can be used with CloudTrail
+* Integrated with many services
+* Hardware security module:
+   * multitenant
+   * stores keys in memory
+   * storing encryptions keys
+   * compliense FIPS 140-2 Level 3
+* KMS complient FIS 140-2 Level 2
+* Master key - encrypt all other keys
+* Envelope encryption - encrypt other keys
+* CMK (customer master key) includes key ID, creation date, description, key state
+* AWS KMS supports symmetric (s3 buket key AES-256) and asymmetric (two keys, ssh keys) CMKs
+* CLI Commands:
+   * aws kms create-key
+   * aws kms encrypt
+   * aws kms descrypt
+   * aws kms re-encrypt
+   * aws kms enable-key-rotation - automatic rotation
+
+Amazon Cognito - decentralized wuth system:
+* Functions:
+   * User pools - wuth using OAuth (FB, Google and etc)
+      * Sign-up Sign-in, Acount reconvery, Account confirmation
+      * Specify primary id, password restriction, user attributes, MFA
+      * Integrate with PinPoint for user campaigns
+      * Can trigger Lambda after signup
+   * Identity Pools
+      * Provide temporary aws creds for aws services
+      * choose auth provider
+      * use SDK to get temp creds
+   * Sync - sync data across all devises
+      * uses push syncronization for updates
+      * key-value
+* Web Identity Federation and Identity Provider
+   * IdP: use trusted provider to auth to other services: Facebook, Amazon, Google Twitter, Github
+   * Types: SAML, OpenID, OIDC
+
+Simple Notification Service (SNS)
+* sends messages in text email (only plain text), lambda, sms, push 
+* messages in topics are stored redundantly across multi-AZ
+* Uses Pub/sub for application integration
+* publishers for sns topic: aws sdk, aws cli, cloudwatch, aws services
+* subscribers for sns topic: lambda, sqs, email, http/s, sms
+* sns topics: group subscriptions, can encrypt with kms, multiple protocols
+* sns subscriptions: per topic, 
+   * Application as subsriber: amazon device, movile push
+   
+SQS (simple queue service):
+* to decouple systems/processes via messages, like Sidekiq, RabbitMQ
+* Queuing systems - not real time, have to pull messages (SQS)
+* Streaming systems - realtime, no pull (Kinesis)
+* Queuing is for connecting isolated apps. 
+* Use case:
+   * app publishes message to the queue
+   * other app pulls, finds a message and does smth
+   * other app completes work and marks msg as processed
+   * app see tha messages is not in queue and processed
+* to extend message size, it's stored in s3. standart size 1 byte .. 256kb
+* Retansion: 4days - default, 60sec .. 40days
+* Guarantees AT LEAST Once
+* Standart queue - unlimited message rate
+* If order is required: FIFO queue support ordered message group, 300 msgs limit
+* Visibility Time-out - message is invisible in SQS Queue, message is deleted only after job is processed, 30sec-default, 0sec..12hours
+* Short vs Long polling, *Short* - return immediately even if no messages. *Long* polling - waits until message arrives, reduce number of empty receives, with SDK
+
+Kinesis - scalable, durable, realtime streaming processing:
+* usecase: stock prices, game analytics
+* Data Streams:
+   * Producers : ec2,mobile, client
+   * shard: 
+      * pay per running shard
+      * from 24h to 168h
+      * data is ordered
+   * consumers: redshift, dynamodb, s3, emr, can have multiple consumers
+* Firehose delivery stream:
+   * data immediately disappears ine data is consumed
+   * support convertion of data, compress, secure
+   * pay for data that is ingested
+* Video streams:
+   * ingest video and audio from various devices
+   * output video data to ML or video processing (SageMakers, Recognition)
+* Data analytics:
+   * input/output streams: Data streams or Firehose streams
+   * run custom sql 
+* KPL - kineses produce library (Java lib)
+
+SSM Parameter store:
+* Secure, hierarchical storage
+* password, db strings, license codes,
+* hierarchies (by using forward slashes, e.g */exam/app/prod*) and track versions
+* types: string, stringlist, secure list
+* tears - can convert standard parameter to advanced but not revert:
+   * standard 10000 params, 4kb, free
+   * advances 100k params, 8kb, param policy
+* Policies: force update/delete password , enforce, multiple ppolicies
+   * timestamp
+   * after days
+* *aws ssm put-parameter --name "..." --value ... --type String*
+* *aws ssm get-prarameters-by-path --path /planet/vulcan*
+
+Secret manager:
+* store, rotate db credentials: RDS, Redshift, DocumentDB, Other DBs, Key/value
+* For db credentialss ned to enter server address, db name, port
+* Enforces encryption at-rest using KMS
+* $0.4 per secret per month, 0.05$ per 10000api calls
+* support CloudTrail
+* Automatic rotation for any DB credentials:
+   * rotation interval up to 365days
+   * creates Lambda
+   * choose to rotate Superuser or developer password
+* *aws secretmanager describe-secret --secret-id ...*   - VersionIds
+* *aws secretmanager get-secret-value --secret-id ... --version-stage ...* - returns SecretString
+* use case:
+   * Rotate password, run lambda to change password in RDS
