@@ -399,3 +399,146 @@ Secret manager:
 * *aws secretmanager get-secret-value --secret-id ... --version-stage ...* - returns SecretString
 * use case:
    * Rotate password, run lambda to change password in RDS
+
+DynamoDB:
+* key-value and document database, guarantee consistent reads and writes and any scale
+* nosql, key/value, document db
+* specify read/writes capacity Units
+* 3+ AZs on SSD
+* Tables contain rows(items) & columns (attributes), keys (column name), value (cell)
+* Read consistency:
+   * Eventual consistent read - possible inconsistent copy, reads are fast, become generally consistent wihin a second
+   * strongly consistent read - wait for consistent, slower
+* Parsitions: 
+   * slice if table into smaller chunk in SSD and replicated. 
+   * speed up read
+   * Create additional partition:
+      * every 10GB
+      * when exceeds RCUs or WCUs for a single partision, maximum 3000 RCUs and 1000 WCUs
+      *  see a split pattern
+* Primary key:
+   * determends where and how data is stored in partitions
+   * PK can't be changed later (called HASH)
+   * sort key - determends stor on a partition (called RANGE)
+   * Simple PK:
+      * Only with a partition key, no sort key
+      * DynamoDB internal hash function hash(PK)
+   * Composite PK:
+      * PK+Sort key should be unique, hash(PK+SK)
+      * Sorting is for fater access
+   * PK Design:
+      * Simple PK:
+         * No two items can have same Partition Key
+      * Composite PK:
+         * Partition+sort should be unique
+      * Distinct - unique
+      * uniform
+* Query and scan:
+   * in console you can query and scan
+   * query:
+      * find items based on PK value
+      * Query table or secondary index
+      * Reads eventually consistent, or ConsistenRead=True
+      * By default returns all attributes, or set attributes in ProjectExpression
+      * By default ascending order, or ScanIndexForward=False
+   * scan:
+      * scan all items, return 1+ items
+      * by default return all attributes
+      * scan on tables and secondary indexes
+      * Much less efficient than query
+      * On big tables, scan is longer
+      * on large table , you can use all provisioned thrughput
+      * avoid scans if possible
+* Provisioned capacity:
+   * Provisioned throughput capacity - maximum amount of capacity
+   * Autoscaling: target utilization (%), minimum provisioned capacity, maximum provisioned capacity
+* On-demand capacity:
+   * better on new tables with unknow load
+   * unpredictable trffic
+   * pay only what you use
+   * default limit: 40000RCU and 40000WCU per table
+   * no hard limit (unlimit on traffic), can be expensive
+* Calculating:
+   * RCU:
+      * one strongly consistency read per second up to 4kb per item
+         * 50 reads at 40kb per item for strong: `40/4*50=500RCUs`
+         * 10 reads at 6kb per item for strong: `(6->8)/4*10=20 RCUs`
+      * two eventually consistens reads per second up to 4kb per item
+         * 50reads at 40kb per item: `40/4/2*50=250 RCUs`
+         * 11 reads at 9kb per item: `12/4/2*11=17 RCUs`
+    * WCU:
+      * one write per second, item up to 1KB:
+         * 50 writes at 40kb per item: `40*50=2000 WCUs`
+* Global tables:
+   * multi-region
+   * required:
+      * use kms cmk
+      * enable streams
+      * stream type of new and old image
+* Transactions:
+   * ACID:
+     * Atomicity
+     * Consistency
+     * Isolation
+     * Durability
+   * No additional cost
+   * Two underlying reads: before and after transaction
+   * via TransactWriteItmes and TransactGetItems API Calls
+* TTL
+   * Items expiration (deletion)
+   * case: session data, logs
+   * define an attribute name (everything is a string in DynamoDB, use Epoch format)
+* Streams:
+   * when item is changed, changes are sent to Lambda
+   * Don't cosume RCUs
+* Errors:
+   * Throttlingexception:
+      * rate of requests exceeds
+   * ProvisionThroughputExceedException:
+      * exceeds maximum allowed number of Throughput, use Exponential backoffs
+* Secondary indexes:
+   * LSI - local secondary index (only with initial table) - strong consistency
+      * base parition, same as PK
+      * can't exceed 10gb
+      * shares provisioned throughput
+      * up to 5 per table
+      * can't add, modify, delete
+      * Checkbox "Create as LSI"
+      * sort key required
+      * can request attributes that not in index
+   * GSi - global secondary table - no strong consistency
+      * can span all of the data in base table across all partitions
+      * no size limits
+      * own throughput settions
+      * up to 20 per table
+      * can add, delete, modify any time
+      * PK can be different
+      * can only request attributes in index
+* Accelerator (DAX)
+   * in-memory cache
+   * miliseconds
+   * good for:
+     * fastest possible response time
+     * read small number of times
+     * repeated reads
+   * bad for:
+     * strong consistent
+     * for write-intensive apps
+     * microseconds response
+     * apps that using other caching solution
+* Cheatsheet:
+   * datatypes: binary, number, string
+* CLI:
+   * `aws dynamodb get-item` - return a set of attributes
+   * `aws dynamodb put-item` - cerate or replace item
+   * `aws dynamodb update-item` - update or create item
+   * `aws dynamodb batch-get-item` - return16Mb of data, 100items
+   * `aws dynamodb batch-write-item` - 16MB, 25
+   * `aws dynamodb create-table`
+   * `aws dynamodb update-table`
+   * `aws dynamodb deleta-table`
+   * `aws dynamodb transact-get-item`  - return objects from multiple tables
+   * `aws dynamodb transact-write-items`
+   * `aws dynamodb query` - find based on primary key
+   * `aws dynamodb scan` - find item by accssing every item
+   
