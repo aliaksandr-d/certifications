@@ -542,3 +542,84 @@ DynamoDB:
    * `aws dynamodb query` - find based on primary key
    * `aws dynamodb scan` - find item by accssing every item
    
+EC2:
+* Resizable compute capacity
+* Choose:
+   * OS: Re
+   * Instance type
+   * Volume: EBS, EFS
+   * Configure: SG, Key Pairs, Userdata
+* Instance Types:
+   * General purpose: A1, T3, M5, 
+   * Compute optimized (more computing): C5, C4
+   * Memory optimized: R5, X1
+   * Accelerated Optimized (GPU): P3, P2, G3
+   * Storage optimized (local large datasets): I3, D2, H1
+* EC2 Instances sized generally double in price and key attributes
+* Instance profile: Attach a role to an instance (IAM Role)
+* Placement groups:
+   * Cluster - close inside AZ
+   * Partition - logical partitions, in separate hardware
+   * Spread - each instance in separate hardware, up to 7 instances, multi-AZ
+* Userdata: 
+   * script is run when lauching an EC2, install packages
+   * Check userdata in http://169.254.169.254/latest/user-data
+* Metadata - get ec2 info from API http://169.254.169.254/latest/meta-data/
+
+VPC (virtual private cloud):
+* Logically isolated section of AWS Cloud, give compelte control over virtual network env
+* Key features:
+   * Region specific
+   * Up to 5 VPCs per region
+   * Every region has default VPC
+   * 200subnets per VPC
+   * Cost nothing: 
+   * Cost some money: NAT Gateway, VPC Endpoints, VPN Gateway, Customer Gateway
+   * DNS Hostnames can be disabled in VPC
+* Default VPC:
+   * size /16 VPC
+   * size /20 subnet per AZ
+   * InternetGateway to default VPC
+   * Default security group
+   * Default NACL
+   * Default DHCP
+* VPC Peering:   
+   * Connect VPCs over direct network route using private IPs
+   * Diffent accounts and regions
+   * Peering uses Star (1 central VPC and secondary VPCs)
+   * No overlapping CIRD
+* Route tables:
+   * Used to determine where network traffic is directed
+   * Multiple subnets can be connected to a single route table, 
+* Internet gateway:
+   * VPC access to internet
+   * Perform NAT (netword, address translation)
+* Bastions/Jumpbox:
+   * bastion host (ec2 in public subnet) is public that has access to private host (ec2 in private subnet)
+   * Session Manager replaces Bastions
+* Direct Connect:
+   * Dedicated network connection from on-premises to AWS
+   * Low bandwidth (50MB-500MB) to High (1GB-10GB)
+
+EC2 Autoscaling Groups:
+* ASG contains a colelction of EC2 with automatic scaling and maangement
+* Settings:
+   * Desired Capacity - ideally run
+   * Min - minimum ec2 , ASG always adds EC2 to fit Min
+   * Max - maximum ec2
+* Healthcheck: 
+   * EC2 type: checks EC2
+   * ELB type: check HTTP request
+* Scaling policies - 
+   * Metric at a target value:
+      * CPU utilization
+      * Network in
+      * Network out
+   * Simple Scaling when alarm is triggered (legacy)
+   * Scaling with steps:
+      * Alam is creached
+      * Scales based on alarm value
+* ELB Integration:
+   * CLB is associated with ASG
+   * ALB, NLB associated with a Target group
+*   
