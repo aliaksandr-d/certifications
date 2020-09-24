@@ -601,7 +601,7 @@ VPC (virtual private cloud):
    * Dedicated network connection from on-premises to AWS
    * Low bandwidth (50MB-500MB) to High (1GB-10GB)
 
-EC2 Autoscaling Groups:
+EC2 Auto Scaling Groups:
 * ASG contains a colelction of EC2 with automatic scaling and maangement
 * Settings:
    * Desired Capacity - ideally run
@@ -622,4 +622,63 @@ EC2 Autoscaling Groups:
 * ELB Integration:
    * CLB is associated with ASG
    * ALB, NLB associated with a Target group
-*   
+* Launch Configuration:
+   * Cannot be edited, clone or create a new one
+   * Create Launch configuration same as EC2 creation
+   * Launch template - Launch Config with vesioning
+
+VPC Endpoints:
+* Privately connect VPC with AWS Services without public IP
+* Traffic doesn't leave AWS Network
+* horisontally scaledm redundant, HA
+* Interface endpoints:
+   * ENI with Private IP
+   * Powered by AWS PrivateLink
+   * paid
+* Gateway endpoint:
+   * Specific eroute in route table traffic to AWS Service
+   * free
+   * only support DynamoDB and S3
+
+ELB:   
+* Distributes traffic to multi tarets 
+* ALB, NLB, CLB
+* Rules of Traffic:
+   * Listeners - posrts that accept traffic
+   * Rules - Listeners invoke rules to decide what to do with traffic, and pass to target group
+   * EC2 instances are registered in Target group
+* ALB and NLB:
+   * Check Listener
+   * check ports
+   * check rules: what to do, e.g. redirect ALB
+   * sends traffic to target group
+   * Target group distribute traffic to E2s
+* ALB:
+   * Layer 7 (HTTP/HTTPS)
+   * Request Routing
+   * WAF
+   * For web app
+* NLB:
+   * Layer 4 (TCP/UDP)
+   * Millions req/sec
+   * Cross-zone LB
+* CLB:
+   * Check listeners
+   * send to registered targets
+   * HTTP/TCP
+   * Sticky sessions
+   * will respond 504 if underlying app not respond (web app or db)
+   * not recommended
+   * at least 2 AZ, it's not cross-region
+* Sticky sessions:
+   * bind user session to same ec2
+   * only CLB or ALB (to target group)
+* Header `X-Forwarded-For` contains client IP 
+* SSL certificate from Amazon Cert Manager
+* Healthchecks:
+   * ALB and NLB have Healthcheck on target group
+   * OutOfService -  unhealthy instance, traffic are not routet
+* Cross-zone load balancing (CLB and NLB)
+   * requests distributed accross all instances in differented AZ
+* Request routing: 
+   * Forward or redirect traffic based on: Host header, source ip, path, http header, http header method, query string
