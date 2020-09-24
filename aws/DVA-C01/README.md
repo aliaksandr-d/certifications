@@ -682,3 +682,33 @@ ELB:
    * requests distributed accross all instances in differented AZ
 * Request routing: 
    * Forward or redirect traffic based on: Host header, source ip, path, http header, http header method, query string
+
+Security Groups:
+* virtual Firewall at the instance level
+* contains inbound and outbound
+* contains EC2 instances
+* All traffic is blocked by default (no 'deny' rules)
+* Instances from multiple Subnets can be assigned to SG
+* Immediate chang effect
+* Can't block specific IP addtess (use NACL)
+* Stateful
+* Use cases:
+   * Source inbound rule can be IP range or IP/32
+   * Source can be another SG
+   * Instance ca belong to multiple SGs, groups are permissive (add allows)
+* Limits
+   * upto 10000SG in a Region (default 2500)
+   * 60 Inbound and 60 outbound per sg
+   * 16 SG per ENI (default 5)
+
+NACL (network access control list)
+* Virtual firewall at Subnet level
+* Allow and deny inbound/outbound traffic
+* Rules are ordered with a number (0..32766) from lowest to highest
+* Can block specific IP
+* Default NACL allow all Inbound/outbound
+* SG is assigned to a single NACL
+* Stateless (inbound rul doesn't allow outbound)
+* use case:
+   * Block specific IP
+   * Deny port SSH
