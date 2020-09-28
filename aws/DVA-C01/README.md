@@ -712,3 +712,39 @@ NACL (network access control list)
 * use case:
    * Block specific IP
    * Deny port SSH
+
+IAM (Identity Access management):
+* Core components:
+  * user - log into console or programmatic access
+  * group - group of users
+    * Group of users with same permissions
+  * roles - associate permissions to roles
+    * multiple policies are attached to role
+* Policies - and Role can be assigned to group of users
+  * Types of policies:
+    * managed - can't edit, managed by aws
+    * customer managed - created by customer
+    * inline policy - atatched directly to user/resource, only to a single object
+  * Structure:
+    * Version
+    * statement - container for policy elements
+      * Sid - (optional) label of statement
+      * effect - allow / deny
+      * principal - account, user, role, federated user
+      * action - list of actions
+      * resource - resource to which action applies
+      * condidtion - (optional)
+  * Password policy - rotate and rules
+* Access keys:
+  * for users with programmatic access
+  * up to 2
+* MFA: 
+  * turned on per user
+  * admin cannot enforse MFA
+  * admin can restrict access without MFA
+* Temporary credentials:
+  * identity federation
+  * delegation
+  * cross - account access
+  * IAM Role
+  * 
