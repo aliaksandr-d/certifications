@@ -747,4 +747,83 @@ IAM (Identity Access management):
   * delegation
   * cross - account access
   * IAM Role
-  * 
+* Identity Federation:
+  * users can exists on a different platform (e.g. Google, FB)
+  * Two types:
+     * Enterprise
+        * SAML
+        * Custom federation broker
+     * Web identity fedetaion
+        * Amazon
+        * FB
+        * Google
+        * openID Conenct 2.0 (OICD) - on top of OAuth 2.0
+* STS (Security Token Service)
+   * *Temporary limited priviledge credentials* for IAM users or for federated users
+   * global service
+   * STS returns:
+      * AccessKeyID
+      * SecretAccessKey
+      * SessionToken
+      * Expiration
+   * API
+      * AssumeRole
+      * AssumeRoleWithSAML
+      * AssumeRoleWithWebIdentity
+         * It's required to identify in FB, get JWT
+         * Call  AWS CLI - ASsumeRoleWebIdentity
+         * Get Temporary credentials
+         * Use temp creds
+   * Cross acccount roles - to grant access for users from different account to resources in your account
+      * Policy: give access to action=sts:AssumeRole to resource in dofferent acc
+
+CloudFront:
+* CDN is a distributed network of server which delivers content to end users based on geo location
+* distribute static, dynamic and streaming
+* Core component:
+   * Origin - where files are lcoated: S3, EC2, ELB, Route53
+   * Edge location - where content will be cached (different than regio or az (readonly)
+   * Distribution - colelction of Edge Location:
+      * Behavious (redirect to HTTPs, redirect to HTTP, set ttl)
+      * Incalidations - manually invalidate cache on specific files via invalidations:
+         * files replacement in s3 doesn't change file in CLoudfront
+         * to invalidate :
+            * Create invalidation
+            * Past file paths (with wildcard)
+            * Takes time
+      * Error Pages - custom error pages
+      * Restrictions - Blacklist or whitelist of countries
+      * Two types of distributions: Web, RTMP
+* Lambda@Edge - pass request and response to lambda and can process:
+   * Viewer request
+   * origin request
+   * origin response
+   * Viewer response
+* CF Protection:
+   * Restrict Viewer Access (used Signed URL or Cookies)
+   * Original identity Access to create Signed URL ot Signed Cookies (not sames as s3)
+      * used to acess private s3 bucket
+   
+Cloudtrail - Logs API calls to AWS, enables governance, compliance, operation auditing, risk auditing
+* Where (IP), when(EventTime),  who (User, useragent), what(region, resource, action)
+* Default last 90days
+* Of >90days , create Custom Trail to output to S3
+* To analyze trail, use Athena
+* Options:
+   * Log to all regions
+   * Across all accounts in an Org
+   * Encrypt logs with KMS
+   * Log file validation
+* CloudTrail can deliver events to CloudWatch logs
+* events:   
+   * Management event:
+      * configure security
+      * register devices
+   * Data events: turned off by default
+      * S3
+      * Lambda
+* Trail:
+   * Choose events: data, management
+   * Choose storage: s3 bucket, path prefix
+   * KMS
+   * Validation
