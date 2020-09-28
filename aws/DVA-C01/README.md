@@ -827,3 +827,90 @@ Cloudtrail - Logs API calls to AWS, enables governance, compliance, operation au
    * Choose storage: s3 bucket, path prefix
    * KMS
    * Validation
+
+CloudFormation:
+* Infrastructure as a Code - manage aws based on defintion files
+* Template formats: JSON and YAML
+* Tempalte anatomy:
+   * MetaData - details about template
+   * Description - what tempalte should do
+   * Parameters - pass to teplate at runtime
+   * Mappings - lookup table - map key to values
+   * Coditions - wether resources are created
+   * Transform - applies macros to change the anatomy to be custom
+   * Resource - resources to create
+   * Outputs - result/values that are returned
+* CF template require at least one resource
+* Stack Update:
+   * CF can intelligently change or recreate resources
+   * Ways:   
+      * Direct updates - update-stack
+      * Change set - can preview changes to CF, good to check changes
+   * Stack updates:
+      * Update with no interruption
+         * ID not changes
+         * without disrupting
+      * Update with some interruption:
+         * some interruption
+         * same ID
+      * Replacement:
+         * recreates
+         * regenerates ID
+   * Prevent update:
+      * Stetement: Deny -> Update:Reokace
+* NestedStack (define TempalteURL)
+   * create modular templates (reusability)
+   * assemble large templates (reduce complexity)
+* Drift Detection:
+   * CF detects that resources deleed or modified
+   * CF doesn't detect drift in nested stacks
+   * When actual configuration differs in aws
+* Rollbacks:
+   * When create/update/delete:
+      * template has syntax error
+      * delete respurce that doesn't exists
+      * *--ignore-rollback*
+      * Rollback can fail
+* Pseudo parameters - predefined by AWS CF, you don't need to declare them:
+   * AWS:: Parition
+   * AWS::Region
+   * AWS::StackId
+* Resource attributes:
+   * CreationPolicy - not success until number of positive signals
+   * DeletionPolicy - reserve or backup resource when stack is deelted
+   * UpdatePolicy - Handle an updaye for asg, ElastiCache Lambda alias
+   * UpdateReplcaePolicy - backup the existing physical instancewhen it's replaces during update operation
+   * DependsOn - Resource is created only after resource in DependsOn
+* Intrinsic Functions - get values that are not available until runtime
+   * Fn::Base64
+   * Fn::Cidr
+   * Fn::FindInMap
+   * Fn::And Fn::Equals Fn::if
+   * Fn::Transform
+   * Fn::GetAZs
+   * Fn:ImportValue - return a value from other stack
+   * Fn:Join - join a list of strings
+   * Fn::Select - get from list by index
+   * Fn:Split
+   * Fn::GetAttr
+* Ref - returns parameter of a resource
+* Fn:GetAttr - returns an attribute from a resource
+* CLI:
+   * *aws cloudformation create-stack* - create a stack
+   * *aws cloudformation update-stack* - update a stack
+* Wait condition, use cases:
+   * coordinate stack resources creation
+   * track the status of a configuration process
+* Large templates (>0.05MB) must be uploaded to s3
+
+Cloud Development Kit:
+* write IaC using imperative paradigm
+* transpiler - one source code into another: imperative to Declarative
+* Imperative:
+   * More flexible, less certain, write less
+* Declarative:
+   * less flxible, very certail, write more
+* Languages: nodejs, typescript (support most apis), python, java, asp.net
+
+Serverless Application Model (SAM):
+* extension for AWS CLI and CloudFormation Macro
