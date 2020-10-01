@@ -914,3 +914,109 @@ Cloud Development Kit:
 
 Serverless Application Model (SAM):
 * extension for AWS CLI and CloudFormation Macro
+* SAM CLI run/package/deploy Serverless apps or Lambdas
+  * sam build
+  * sam deploy - upload package to artifactory and deploy
+  * sam init - create sample project
+  * sam local generate-event
+  * sam local invoke - single lambda call locally
+  * sam local start-api
+  * sam local start-lambda - tun a lambda locally (easier)
+  * sam logs - logs for Lambda
+  * sam package - creates a zip and copy to s3
+  * sam publish - publish SAM app to AWS serverless app repo
+  * sam validate - validate an aws sam template
+* CI/CD pipeline: Code, Build, Integrate, Test Release, Deploy
+  * CI = Code-Test - integrate code changes in a single project:
+     * each commit triggers a pipeline : CodeCommit, Lambda, CodeBuild, Artifact
+  * Continous Delivery = Code-Release - prepare a code for release:
+     * CI + Artifact + Lambda + Create PR + manual merge to master
+  * Continous Deployment = Code-Deploy - automaticaly deploys changes to prod:
+     * CD + CodeDeploy (deploy from master to Prod servers)
+
+CodeCommit:
+* Host Git-based repositories
+* VCS / Source Control
+* Can push/pull code
+* Same like Github, Bitbucket, Gitlab
+* Key Features:
+   * Compliance programs, e.g. HIPAA
+   * encrypted
+   * Large number of files and ..
+   * No limit
+   * Repo is closed to AWS Cloud
+   * Use IAM to control users
+
+Docker:
+* compare to EC2
+* dockerfile:
+   * FROM - base docekr image
+   * RUN - execute any command
+   * WORKINGDIR - default folder
+   * COPY - copy files from local pc
+   * ENTRYPOINT - can't be 
+   * EXPOSE - entrypoint command, can't be changed
+   * CMD - pass parameters to entrypoint
+* CLI:
+   * docker build
+   * docker ps
+   * docker images
+   * docker run - run a command in a new contaner
+   * docker push 
+   * docker pull - pull from repo
+
+CodeBuild - compiles code, run unit tests, produces artifacts
+* Support Maven, Gradle
+* Customize build env
+* Workflow:
+   * Trigger codebuild: Console, cli, sdk, CodePipeline
+   * Setup build env: Managed images or Custom image (docker image):
+      * Managed: Ubuntu, Amazon Linux,
+      * Custom image in ECR
+   * Source code in buildspec.yml: Github, Bitbucker, AWS CodeCommit, S3
+* Cases:
+   * Trigger in AWS Console, CodeCommit, CodeBuild, Render static files to S3
+   * Push to Github, Webhook, CodeBuild
+* Buildspe.yml:
+   * Build instructions in root of proejct
+   * Structure:
+      * version: 0.2 - all build commands in a same instance, 0.1 - each command in separate instance
+      * phases: commands in each build phase
+         * install - install packages in build env
+         * pre_build
+         * build
+         * Post_build
+      * artifact: build output
+      
+CodeDeploy - deploypipeline to deploy on prod, stagng env
+* can deploy ec2, on-prem, lambda, ecs
+* update lambda version
++ avoid downtime
+* in-place or blue/green
+* integrateds with CI/CD tools: jenkins, CodePipeline
+* integrates with config management: puppet, chef, ansible
+* Core components:
+   * Application - unique id for app being deployed
+   * deployment group - a set of ec2/lambda
+   * deployment - process to apply a new app revision
+   * deployment configuration - deployment rules
+   * AppSpec file - deployment actions that CodeDeploy exec for deployment
+   * Revision - Everything for deploy new version AppSpec, app files, config files, executables
+* In-place deployments - updates deployment group with a latest app revisions
+   * only EC2/on-prem, support, not lambda
+* Blue/green - creates new ec2 isntances, deploy, switch to new ASG, remove old EC2s
+* appspec.yml:
+   * version: 0.0
+   * os: linux
+   * files: { source, destination }
+   * permissions: 
+   * lifecycle hooks - different depending on ec2/lambda and in-place/blue-green deployment:
+      * ApplciationStop - how to stop ap
+      * BeforeInstall
+      * AfterInstall
+      * ApplicationStart
+* CodeDeploy agent and ServiceRole:
+   * not installed on Amazon linux
+   * binary that checked CodeDeploy
+   * ServiceRole AWSCodeDeployRole - create EC2/ELB and ect
+   
