@@ -1105,3 +1105,216 @@ Aurora Serverless:
 * Can't turn off Backup, choose retention period
 * Support force scaling
 * Cloud9 supports 
+
+S3:
+* Object-based storage
+  * not file system (files and hyerarchy)
+  * not block storage (sector and tracks)
+* Unlimited storage
+* Object:
+   * key
+   * value - 0bytes .. 5TB
+   * version id
+   * meradata
+* bucket:
+   * hold object
+   * unique name within all AWS
+* Storage classes:
+   * Standard: 99.99% availability, 11 9s durability, across 3 AZs
+   * Intelligent tiering - use ML to choose appropriate class
+   * Standard IA - access files less once month
+   * One zone IA - retrival fee, data could be destroyed
+   * Glacier - long term, retrieve takes minutes to hours
+   * Glacier deep archive - 12 hours to retrieve
+* Storage class compare:
+   * 11 9s durability
+   * Availability 99.9% but 99.5% in one AZ
+   * only One-zone has 1 AZ
+   * min capacity  change
+   * min duration charge: 128kb for Standard IA and one-zone IA, 40kb for Glacier
+   * retrieval fee: paid per GB for Standard IA, One-zone IA, Glacier
+* S3 Securiy:
+   * Private by default
+   * Bucket policies - with json, flexible:
+      * Allow/deny
+      * Principal: path
+      * Action: PutObject, PutObjectAcl
+      * S3 bucket ARN
+   * Access COntrol Lists - (legacy feature), control access to bucket and objects
+* S3 Encryption:
+   * When upload SSL/TLS 
+   * Server side encryption:
+      * SSE-AES - encryption algorithm
+      * SSE-KMS - using KMS to encrypt
+      * SSE-C - customer provided key
+      * Client side encryption - before upload
+   * After enable, existing files are not encrypted
+   * Files are accesible, they are encrypted on server side
+* Data consistency:
+   * Puts - new object, Read after Write consistency - when object is created, it's available
+   * Overwrite or delete - takes time to replicate
+* Cross region replication - replicate to another region:
+   * Higher durability,
+   * Support other account
+   * Copy from a bucket to another bucket, destination bucket needs to be created before
+   * *Versioning* is required
+   * Storage class be changed in replication
+* Versioning:
+   * Store all version of an s3 object
+   * Cannot be disabled, only suspended
+   * MFA Delete feature
+   * Track object changes
+   * To enable: properties - versioning. 
+   * Not able to *Turn off* but *Suspend*
+   * *Version ID = null* for files that uploaded when *Versioning is off*.
+   * New upload doesn't inherit properties of previous versions (e.g. Public access)
+   * Protect from deletion of files
+   * When object is deleted, previos version is restored
+* Lifecycle:
+   * Can be used with vesioning
+   * Change storage class depending on conditions
+   * Delete on schedule
+   * Automate a process of changing storage class:
+      * *Add lifecycle rule*
+      * Storage class transition: current version/previos
+      * Minimum 30 days after creation
+      * Expiration - delete version after N days
+* Transfer acceleration:
+   * CloudFront uses Edge Locations
+   * Users upload data to Edge location
+* Presigned url:
+   * aws s3 presign s3://... --expires-in 300
+* MFA Delete:
+   * users cannot delete without MFA Code
+   * Versioned must be turned on
+   * aws s3api pre-bucket-versioning 
+   * only bucket owner logged in as Root can delete 
+   * not delete object by acident
+* Public:
+   * *Make public* is disabled by default
+   * Permissions - untick *Block public access*
+* S3 CLI:
+   * aws s3 ls
+   * aws s3 ls s3://...
+   * aws s3 cp
+   * aws s3 presign s3://... --expires-in
+   
+ElastiCache:
+* Cache - trmporary storage area, non drable
+* In-Memory Data Store - very fast, risk of loss
+* Only within same VPC
+* ElastiCache support:
+   * Memached
+      * key/value store
+      * very fast and simple
+      * preferable for HTML
+   * Redis:
+      * different operations on data
+      * leaderboards, notifications
+      * not fast as memcache
+      * Supprots Snapshots, transactions
+
+Lambda:
+* Run code wihout provision or managing servers, serverless
+* Scales automaticaly
+* Pay for compute time and invocation
+* Supports: Ruby, Python, Java, Go, Powershell, NodeJs, C#
+* Support custom runtime
+* Use case: Processing Thumbnails, Contact email form
+* Triggers:
+   * AWS SDK
+   * AWS Services: Gateway, Alex, CloudFront, CloudWatch, Kinesis, S3, DynamoDB and etc
+   * External partners
+* Pricing: 1milion requests are free per month, then $0.2 per 1M requests
+* Interface:
+   * Choose runtime
+   * Upload code: inline, zip files, choose in s3
+   * Choose trigger
+   * Grant permission for outputs via IAM Role
+* Defaults and limits:
+   * 1000 concurrently runs (but can be increased per request)
+   * /tmp up to 500MB
+   * No VPC by default, but can cahnge VPC
+   * Timeout maximum 15Min, *or use Fargate*
+   * memory 128MB..3008MB at increment 64MB (more memory - more expensive)
+* Cold Starts:
+   * Delay to copy code
+* Versioning:
+   * To deploy a version beta not for prod
+   * To revert version
+   * *Publish new version*
+   * After a publish each version has its own unique ARN
+   * Two initial versions:
+      * Quilified ARN: $LATEST or any version 
+      * Unqualified ARN - alwayspoint latest version, cannot create Aliases
+* Aliases:
+   * Friendlier name to a version
+   * *Create Alias*
+* Layers:
+   * Pull in additional code and content
+   * Zip that contains libraries, custom runtime, dependencies
+   * Modular
+   * Up to 5 layes
+   * <250MB
+   * e.g. python library
+   
+API Gateway:
+* Create secure APIs at any scale
+* Front door for applications
+* Pass request to API Gateway cache, CloudWatch, AWS Services
+* Key Features:
+   * All tasks involving, up to 100.000 of concurrent api calls
+   * prevent attacks
+   * HTTPS
+   * Highly scalable
+   * Send each API to a different target
+   * Multiple versions of API
+* Configuration:
+   * Resources: URL, can have child resources (e.g. /project/-id-/edit)
+   * Methods on Resources, can have Multiple: Get, Post, Delete and etc.
+   * Stages - versions of API: prod, qa and ect
+   * Invoke URL - URL for each stage, custom domain
+   * Deploy API - after each change, changes must be deployed *Deploy API*
+   * Integration: HTTP, Lambda and etc
+* Cache:
+   * Caches responses for TTL
+   * Looking for responses in cache
+   * reduce load
+* CORS:
+   * Access-Control-Allow-Methods
+   * Access-Control-Allow-headers
+   * By default not enabled
+   * CORS is always enforsed by a client
+* Same Origin Policy (XSS):
+   * Execute script from another website on your site
+* Can require auth with AWS Cognito or cstom lambda
+
+Step functions:
+* multiple aws services into pipeline
+* State machine - sequence of states, decide how state goes a different, Flow-chart:
+   * *Standard* - durable, etl jobs, long-duration jobs
+   * *Express* - short duration high-event-rate workflows
+* Step functions - serverless workflow, trigger each step, retries on failure and etc
+* Steps can run in parallel
+* Steps are defined in JSON using *Amazon States Language*: Comment, Version, States, Resource, parameters, 
+* use cases:
+   * Manage a batch job or fargate container - Submit a job to AWS Batch, if fail - notify in SNS
+   * Transfer Data Records:
+      * Load up DynamoDB table
+      * Add each item to a queue
+      * When item is processed - remove from queue
+      * Send a report
+* States:
+   * Pass state - input to it's output without performing work, useful for debugging, does nothing
+      * Parameters, Result, Resultpath
+   * Task State - single unit of work performed by a state machine
+      * performs work by Lambda
+      * AWS service - Lambda, AWS Batch, SNS, SQS and etc
+      * Actions - doing work outside of AWS: EC2, ECS, mobile phone
+         * Waits for an activity worker poll for a task
+   * Choise state - add branching logic to a state machine
+   * Wait state - delay for a specified time (for period and till datetime)
+   * Succeed state - stops an execution - good for branching
+   * Fail state - mark a failure of a state machine: Cause, Error
+   * Parallel states - to run states in parallel: Branches
+   * map state - run a set of steps for each element of an input array
