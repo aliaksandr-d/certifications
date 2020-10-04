@@ -992,7 +992,6 @@ CodeDeploy - deploypipeline to deploy on prod, stagng env
 * can deploy ec2, on-prem, lambda, ecs
 * update lambda version
 + avoid downtime
-* in-place or blue/green
 * integrateds with CI/CD tools: jenkins, CodePipeline
 * integrates with config management: puppet, chef, ansible
 * Core components:
@@ -1002,9 +1001,10 @@ CodeDeploy - deploypipeline to deploy on prod, stagng env
    * deployment configuration - deployment rules
    * AppSpec file - deployment actions that CodeDeploy exec for deployment
    * Revision - Everything for deploy new version AppSpec, app files, config files, executables
-* In-place deployments - updates deployment group with a latest app revisions
-   * only EC2/on-prem, support, not lambda
-* Blue/green - creates new ec2 isntances, deploy, switch to new ASG, remove old EC2s
+* Deployments:
+   * In-place deployments - updates deployment group with a latest app revisions
+      * only EC2/on-prem, support, not lambda
+   * Blue/green - creates new ec2 isntances, deploy, switch to new ASG, remove old EC2s
 * appspec.yml:
    * version: 0.0
    * os: linux
@@ -1020,3 +1020,88 @@ CodeDeploy - deploypipeline to deploy on prod, stagng env
    * binary that checked CodeDeploy
    * ServiceRole AWSCodeDeployRole - create EC2/ELB and ect
    
+CodePipeline - managed ci/cd pipeline:
+* Anatomy:
+   * Pipeline
+   * Stage - e.g. source/build/deploy, has a group of actions
+   * Action group = group several acrtions
+   * Action - do smth, group code, build , lambda
+   * Artifact - zip retuned by action and stored in s3
+   * Stage transitions - links stages
+* Action:
+   * Custom actions: 
+      * Source , 
+      * Test (AWS Code build, Jenkins)
+      * Deploy: Cloudformation, Codedeploy, s3
+      * Invoke: lambda
+* Example:
+   * Source: Pull from Github
+   * Stage transit,
+   * Deploy: CodeDeploy
+* Use Cases:
+   * Monolith application: Github, CodeBuild, CodeDeploy
+   * Satic S3 website: Bitbucket, CodeBuild, Lambda
+   * Serverless function: Codecommit, CloudFormation (deploy)
+   
+CodeStar:
+* Deployment pipeline, access management, project dashboard
+* how to
+   * Choose tempalte
+   * Creaye a mew git
+   * CodePipeline
+
+RDS:
+* Relational db service, many engines
+* Aurora, MySQL, MariaDB, oracle, MSSQL, Postgres
+* Encryption:
+   * Old versions can non-support
+   * KMS
+* Backups:
+   * Automated:
+      * Retantion perion 1-35days
+      * In s3
+      * Backup window
+      * Storage i/o may be suspended
+   * Manual - Database snaphot
+      * Manually 
+      * backup persists even if rds is deleted
+* Restoring backup:
+   * Restore in point-in-time
+   * never restored overtop an existance instance (creates new instance)
+* Multi-AZ - standby copy:
+   * Syncs from master to standby db
+   * Automatic failover protection if master goes down
+* Read replicas - multiple copies that allow only read:
+   * Multiple copies of DB - only read
+   * async 
+   * <=5 replicas
+   * Multi-az replicas, cross-region replicas
+   * mast have auto backup
+* Multi-az vs read replicas:
+   * Sync - async
+   * only master is availabl - all available
+   * auto backup - no backup
+   * two az within region - az, cross-az, cross regio
+   * db update
+   * auto failover - manual failover
+* Templates for running: prod, dev, free tier
+* Performance insight - rich analytics dashboard
+   * view performance per query
+   * rich analytics
+* Reserved instances:
+   * pay upfront 1-3years
+* Snapshots:
+   * Restore snapshot
+      * Create a new instance
+      * to change a size of instance
+      * change multi-az
+   * Migrate snapshot - migrate to a different engine (e.g. to aurora), engine version
+   * Copy - move snapshot to other region
+
+Aurora Serverless:
+* Cheeper, for development
+* Choose capacity: choose capasity units
+* Data API - SQL HTTP API
+* Can't turn off Backup, choose retention period
+* Support force scaling
+* Cloud9 supports 
