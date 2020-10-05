@@ -1281,13 +1281,34 @@ API Gateway:
    * Looking for responses in cache
    * reduce load
 * CORS:
-   * Access-Control-Allow-Methods
-   * Access-Control-Allow-headers
+   * CORS request is made to:
+      * different domain
+      * different subdomain
+      * different port
+      * different protocol
+   * For simple requests (non-CORS), response needs to include *Access-Control-Allow-Origin*
+   * Preflight request for CORS:
+      * *Origin* header
+      * method *OPTION*
+      * includes *Access-Control-Request-Method* , *Access-Control-Request-Headers*
+   * API must enable:   
+      * Access-Control-Allow-Methods
+      * Access-Control-Allow-headers
+      * Access-Control-Allow-Origin
+      * Support *OPTION* method
    * By default not enabled
    * CORS is always enforsed by a client
 * Same Origin Policy (XSS):
    * Execute script from another website on your site
-* Can require auth with AWS Cognito or cstom lambda
+* Can *require auth* with AWS Cognito or custom lambda
+* Throttle API:
+   * Rate - Steady-state rate, requests per second
+   * Burst - maximum bucket size of requests
+   * When requests rate > rate and burst limit, API Gateway fails *429 Too many Requests*
+* Cache:
+   * it is enabled per Stage
+   * only GET is cached
+   * CloudWatch metrics: *CacheHitCount* and *CacheMissCount*
 
 Step functions:
 * multiple aws services into pipeline
