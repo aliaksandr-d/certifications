@@ -303,6 +303,10 @@ KMS:
    * aws kms descrypt
    * aws kms re-encrypt
    * aws kms enable-key-rotation - automatic rotation
+* It's possible to use CloudTrail to find requests to KMS from DynamoDB
+* API:
+   * Encrypt
+   * Descrypt
 
 Amazon Cognito - decentralized wuth system:
 * Functions:
