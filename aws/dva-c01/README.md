@@ -4,6 +4,7 @@ Links:
 * [AWS Developer Learning Path](https://aws.amazon.com/training/path-developing/)
 * [Sample questions](https://d1.awsstatic.com/training-and-certification/docs-dev-associate/AWS-Certified-Developer-Associate_Sample-Questions.pdf)
 * [Exam guide](https://d1.awsstatic.com/training-and-certification/docs-dev-associate/AWS-Certified-Developer-Associate_Exam-Guide.pdf)
+* [AWS Certified Developer Official Study Guide](https://1lib.eu/book/5237207/326a66)
 
 Distribution:
 * Deployment
