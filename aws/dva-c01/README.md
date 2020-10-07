@@ -2,6 +2,8 @@ Links:
 * [Free Code Camp Course](https://www.youtube.com/watch?v=RrKRN9zRBWs)
 * [How I Passed the AWS Certified Developer Associate Exam](https://www.freecodecamp.org/news/how-i-passed-the-aws-certified-developer-associate-exam/)
 * [AWS Developer Learning Path](https://aws.amazon.com/training/path-developing/)
+* [Sample questions](https://d1.awsstatic.com/training-and-certification/docs-dev-associate/AWS-Certified-Developer-Associate_Sample-Questions.pdf)
+* [Exam guide](https://d1.awsstatic.com/training-and-certification/docs-dev-associate/AWS-Certified-Developer-Associate_Exam-Guide.pdf)
 
 Distribution:
 * Deployment
